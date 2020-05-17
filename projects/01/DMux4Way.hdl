@@ -16,16 +16,7 @@ CHIP DMux4Way {
     OUT a, b, c, d;
 
     PARTS:
-    Nand(a=sel[0], b=sel[0], out=notFirst);
-    Nand(a=sel[1], b=sel[1], out=notSec);
-
-    And(a=notFirst, b=notSec, out=condA);
-    And(a=notFirst, b=sel[1], out=condB);
-    And(a=sel[0], b=notSec, out=condC);
-    And(a=sel[0], b=sel[1], out=condD);
-
-    And(a=condA, b=in, out=a);
-    And(a=condB, b=in, out=b);
-    And(a=condC, b=in, out=c);
-    And(a=condD, b=in, out=d);
+    DMux(in=in, sel=sel[1], a=br1, b=br2);
+    DMux(in=br1, sel=sel[0], a=a, b=b);
+    DMux(in=br2, sel=sel[0], a=c, b=d);
 }
