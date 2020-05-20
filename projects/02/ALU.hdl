@@ -37,10 +37,30 @@ CHIP ALU {
         no; // negate the out output?
 
     OUT 
-        out[16], // 16-bit output
+        out[16], // 16-bit output90
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    Mux16(a=x, sel=zx, out=x1);
+    Not16(in=x1, out=negX);
+    Mux16(a=x1, b=negX, sel=nx, out=theX);
+
+    Mux16(a=y, sel=zy, out=y1);
+    Not16(in=y1, out=negY);
+    Mux16(a=y1, b=negY, sel=ny, out=theY);
+
+    Add16(a=theX, b=theY, out=xPlusY);
+    And16(a=theX, b=theY, out=xAndY);
+    Mux16(a=xAndY, b=xPlusY, sel=f, out=out1);
+
+    Not16(in=out1, out=nOut);
+    Mux16(a=out1, b=nOut, sel=no, out=out, out[0..7]=outPart1, out[8..15]=outPart2, out[15]=firstOut);
+
+    Or8Way(in=outPart1, out=or1);
+    Or8Way(in=outPart2, out=or2);
+    Or(a=or1, b=or2, out=notZero);
+    Not(in=notZero, out=zr);
+
+    Mux(a=false, b=true, sel=firstOut, out=ng);
 }
